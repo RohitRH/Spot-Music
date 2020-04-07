@@ -1,0 +1,158 @@
+﻿@model Spot_Music.ViewModels.AddSongViewModel
+@{
+    ViewData["Title"] = "Add Song";
+}
+
+<h1>welcome to add song page</h1>
+
+<form asp-action="AddSong" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="SongName"></label>
+        <input asp-for="SongName" class="form-control" />
+        <span asp-validation-for="SongName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="ReleaseDate"></label>
+        <input id="ReleaseDate"  name="ReleaseDate" type="datetime-local" class="form-control" />
+        <span  class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Image"></label>
+        <input asp-for="Image" class="form-control" />
+        <span asp-validation-for="Image" class="text-danger"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="Artists"></label>
+        <select asp-for="Artists" asp-items="@((List<SelectListItem>)ViewBag.items)" class="form-control" multiple></select>
+        <span asp-validation-for="Artists" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-warning">  ADD  </button>
+</form>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" style="float:right;" data-toggle="modal" data-target="#exampleModalCenter">
+    Add Artist
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Add Artist</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                
+                    <div class="form-group">
+                        <label asp-for="ArtistName"></label>
+                        <input asp-for="ArtistName" class="form-control" />
+                        <span asp-validation-for="ArtistName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DOB"></label>
+                        <input asp-for="DOB" class="form-control" />
+                        <span asp-validation-for="DOB" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Bio"></label>
+                        <textarea asp-for="Bio" class="form-control"></textarea>
+                        <span asp-validation-for="Bio" class="text-danger"></span>
+                    </div>
+                <div>
+                    <span id="msg" class="text-success"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submit_message()">Save changes</button>
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function submit_message() {
+
+        var name = document.getElementById("ArtistName");
+        var bio = document.getElementById("Bio");
+        var dob = document.getElementById("DOB");
+        if (name.value == "" || bio.value == "" || dob.value == "")
+        {
+            document.getElementById("msg").innerHTML = "Fill All feilds";
+            return;
+        }
+        console.log(name.value);
+        var entry = {
+            ArtistName: name.value,
+            Bio: bio.value,
+            DOB: dob.value
+        };
+        console.log(entry);
+        fetch(`${window.origin}/Home/AddArtist`, {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(entry),
+            cache: "no-cache",
+            headers: new Headers({
+                "content-type": "application/json"
+            })
+        })
+            .then(function (response) {
+                if (false) {
+                    console.log(`Looks like there was a problem.`);
+                    document.getElementById("msg").innerHTML = "There is Some problem";
+                    return;
+                }
+                response.json().then(function (data) {
+                    console.log(data);
+                    
+                    adding(data);
+                });
+            })
+            .catch(function (error) {
+                console.log("Fetchadding(); error: " + error);
+            });
+
+    }
+
+
+
+    function adding(data){
+          var x = document.getElementById("Artists");
+          console.log(data);
+          var options=[];
+          var option = document.createElement("option");
+          name=document.getElementById("ArtistName").value
+          option.text = name;
+          option.value = data;  
+          options.push(option.outerHTML);
+          x.insertAdjacentHTML('beforeEnd', options.join('\n'));
+        //x.add(option);
+        document.getElementById("msg").innerHTML = "Record inserted press close to go back to page";
+        document.getElementById("ArtistName").value = "";
+        document.getElementById("Bio").value = "";
+        document.getElementById("DOB").value="";
+  }
+</script>
+
+
+
+
+
+<br />
+<br />
+<br />
+<br />

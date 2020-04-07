@@ -1,0 +1,130 @@
+﻿@model Spot_Music.ViewModels.FirstPageViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">WELCOME TO SPOT MUSIC</h1>
+    <h3 class="display-4">
+        A place where you can find every music
+    </h3>
+    <br /><br />
+</div>
+
+<div>
+
+</div>
+<h1 class="display-4 text-left">Top 10 songs</h1>
+<br />
+<br />
+
+
+<div class="row row-cols-1 row-cols-md-5">
+    @{ var j = 0;}
+
+    @foreach (var item in Model.TopSongs)
+    {
+        var imagePath = "/images/" + item.ImagePath;
+        <div class="card">
+            <img src=@imagePath class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">@item.SongName</h5>
+                <p class="card-text">
+                    <div>
+                        <span>@item.ReleaseDate.Day</span>
+                        <span> @item.ReleaseDate.ToString("MMMM")</span>
+                        <span> @item.ReleaseDate.Year</span>
+                    </div>
+
+                    @foreach (var artist in Model.ArtistsOfTopSongs[j++])
+                    {
+
+                        <div>@artist</div>
+
+                    }
+                </p>
+            </div>
+            @if (ViewBag.loggedin == 1)
+            {
+                var flag = 0;
+                foreach (var x in Model.users)
+                {
+                    if (item.SongId == x.SongId)
+                    {
+                        flag = 1;
+                        break;
+                    }
+                }
+                if (flag == 0)
+                {
+                    <div class="card-footer">
+                        <small class="text-muted">Select below Rate</small>
+                        <form asp-action="RateSong" asp-controller="Home" method="post">
+                            <div class="form-group">
+                                <input name="SongId" type="text" value=@item.SongId hidden />
+                                <select name="Rating" class="form-control">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-info">Rate</button>
+                        </form>
+                    </div>
+                }
+                if (flag == 1)
+                {
+                    <div class="card-footer">
+                        <h4 class="text-success">Rated</h4>
+
+                    </div><br /><br /><br /><br />
+                }
+            }
+        </div>
+
+    }
+</div>
+<br />
+<br />
+<br />
+<br />
+<h3 class="display-4">Top 10 Artists</h3>
+<br />
+<br />
+<div class="row row-cols-1 row-cols-md-5">
+
+    @{ j = 0;}
+    @foreach (var item in Model.TopArtists)
+    {
+        <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+            <div class="card-header">@item.ArtistName</div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <span>@item.DOB.Day</span>
+                    <span> @item.DOB.ToString("MMMM")</span>
+                    <span> @item.DOB.Year</span>
+                </h5>
+                @foreach (var song in Model.SongsOfTopArtists[j++])
+                {
+                    <h6>
+                        @song
+                    </h6>
+                }
+            </div>
+        </div>
+    }
+</div>
+<br />
+<br />
+<br />
+<br />
+<style>
+    .card-img-top {
+        width: 100%;
+        height: 15vw;
+        object-fit: cover;
+    }
+</style>
