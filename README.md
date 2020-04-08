@@ -2,7 +2,7 @@ SPOT MUSIC
 A Music Web Application
 
 
-Developed in ASP.NET Core MVC
+Developed in ASP.NET Core 
 
 Prerequisites - Visual Studio
 
